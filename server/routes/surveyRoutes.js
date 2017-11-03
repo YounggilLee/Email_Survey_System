@@ -26,16 +26,16 @@ module.exports = app => {
 
     app.post('/api/surveys/webhooks', (req, res) => {
         const p = new Path('/api/surveys/:surveyId/:choice');
-        //console.log(req.body);
+        console.log(req.body);
         
         _.chain(req.body)        
             .map(({ email , url }) => {
                 const match =p.test(new URL(url).pathname);
-                    if( match) {
+                    if( match ) {
                         return { email,
                                 serveyId: match.surveyId,
                                 choice: match.choice
-                                };
+                                }
                     }
                 })
             .compact()
@@ -73,12 +73,12 @@ module.exports = app => {
         const mailer = new Mailer(survey, surveyTemplate(survey));
         
         try {
-        await mailer.send();
-        await survey.save();
-        req.user.credits -= 1;
-        const user = await req.user.save();
+            await mailer.send();
+            await survey.save();
+            req.user.credits -= 1;
+            const user = await req.user.save();
 
-        res.send(user);
+            res.send(user);
         } catch (err) {
             res.status(422).send(err);
         }
